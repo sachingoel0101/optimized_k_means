@@ -1,0 +1,34 @@
+The code is present in the directory ~/btp/simd/code directory.
+Running make all will generate six binaries in the same directory, which are namely mnist, 3d_pro, cifar, birch1, birch2, birch3 for the respective data sets.
+To add a new data set, you'll have to modify at two places:
+1. main.h : Add an entry in the form
+	#ifdef SOME_NAME
+	#define NUM_POINTS // number of points in the data set
+	#define DIMENSION // dimensionality of data set
+	#define ROUNDED_DIMENSION //the nearest higher power of 2
+	#define NUM_CLUSTER // number of clusters
+	#define ROUNDED_CLUSTER // the nearest higher power of 2
+	#define DATA "name_of_file" // data file should be present at ../data/name_of_file
+	
+2. makefile: Add an entry in the form
+	g++ -D SOME_NAME  main.cpp -std=c++11 -O3 -msse4.2 -fopenmp -o  name_of_binary
+	
+Running the code (example of MNIST):
+First set the number of threads on terminal with "export OMP_NUM_THREADS=20"
+For random: ./mnist random 50 where 50 is the number of runs
+For kmeans++: ./mnist kmeans++ 50 
+For d2-seeding: ./mnist d2-seeding 50 10 will run 50 times with N=10k
+For kmeans||: ./mnist kmeans-par 50 2 5 will run 50 times with l = 2k and r=5
+
+Results will be available in ../logs/mnist/
+Individual run log are present as:
+random_threads=20_runNo=*.txt
+kmeans++_threads=20_runNo=*.txt
+d2-seeding_N=10k_threads=20_runNo=*.txt
+kmeans-par_l=2k_r=5_threads=20_runNo=*.txt
+								  
+Mean and standard deviations are present as:
+random_threads=20_result.txt
+kmeans++_threads=20_result.txt
+d2-seeding_N=10k_threads=20_result.txt
+kmeans-par_l=2k_r=5_threads=20_result.txt
